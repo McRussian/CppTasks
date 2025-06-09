@@ -5,6 +5,7 @@ find_package(GTest REQUIRED)
 add_executable(vector_test 
     ${CMAKE_CURRENT_SOURCE_DIR}/vector_test.cpp 
     ${CMAKE_SOURCE_DIR}/src/vector.hpp
+    ${CMAKE_SOURCE_DIR}/src/exception.hpp
 )
 
 # Линкуем с GTest

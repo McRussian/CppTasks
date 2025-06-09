@@ -12,13 +12,11 @@ private:
     int error_code;
 };
 
-
-class VectorException: CommonMathException
-{
-
-};
-
-class MatrixException: CommonMathException
-{
-
+class VectorException : public CommonMathException {
+public:
+    explicit VectorException(int code, const std::string& message)
+        : CommonMathException(code, "Vector error: " + message) {}
+    
+    explicit VectorException(int code, const char* message)
+        : CommonMathException(code, message) {}
 };
