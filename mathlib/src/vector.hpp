@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <initializer_list>
 
@@ -117,6 +118,19 @@ public:
     // Константный оператор индексирования
     const T& operator[](size_t index) const {
         return data_[index];
+    }
+
+    // Оператор сравнения
+    bool operator==(const Vector<T>& other) const {
+        if (size_ != other.size_) {
+            throw VectorException(10, "Vectors must be of the same size");
+        }
+        return std::equal(data_, data_ + size_, other.data_);
+    }
+
+    // Оператор неравенства
+    bool operator!=(const Vector<T>& other) const {
+        return !(*this == other);
     }
 
     // Оператор сложения векторов
