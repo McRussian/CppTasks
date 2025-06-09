@@ -1,23 +1,17 @@
 #include <iostream>
 #include <initializer_list>
 
-#include "exception.h"
+#include "exception.hpp"
 
 template <typename T>
 class Vector {
 public:
-    Vector(size_t size): size_(size) {
-        data_ = new T[size];
-        if (data_ == nullptr)
-            throw VectorException(1, "Failed to allocate memory for vector");
-        for (size_t i = 0; i < size_; i++)
-            data_[i] = T();
+    explicit Vector(size_t size): size_(size) {
+        data_ = new T[size_]();
     }
 
     Vector(size_t size, T value): size_(size) {
-        data_ = new T[size];
-        if (data_ == nullptr)
-            throw VectorException(1, "Failed to allocate memory for vector");
+        data_ = new T[size_];
         for (size_t i = 0; i < size_; i++)
             data_[i] = value;
     }
@@ -25,8 +19,6 @@ public:
     // Конструктор с инициализацией списком
     Vector(std::initializer_list<T> init) : size_(init.size()) {
         data_ = new T[size_];
-        if (data_ == nullptr)
-            throw VectorException(1, "Failed to allocate memory for vector");
         size_t i = 0;
         for (const auto& item : init) {
             data_[i++] = item;
@@ -36,8 +28,6 @@ public:
     // Конструктор копирования
     Vector(const Vector& other) : size_(other.size_) {
         data_ = new T[size_];
-        if (data_ == nullptr)
-            throw VectorException(1, "Failed to allocate memory for vector");
         for (size_t i = 0; i < size_; ++i) {
             data_[i] = other.data_[i];
         }
@@ -60,8 +50,6 @@ public:
             delete[] data_;
             size_ = other.size_;
             data_ = new T[size_];
-            if (data_ == nullptr)
-                throw VectorException(1, "Failed to allocate memory for vector");
             for (size_t i = 0; i < size_; ++i) {
                 data_[i] = other.data_[i];
             }
@@ -82,31 +70,22 @@ public:
     }
 
     // Метод для получения размера вектора
-    size_t getSize() const {
+    size_t size() const {
         return size_;
     }
 
     // Метод доступа к элементу с проверкой границ
     T& at(size_t index) {
-        if (index >= size_) {
-            throw VectorException(5, "Index out of range");
-        }
         return data_[index];
     }
 
     // Константный метод доступа к элементу с проверкой границ
     const T& at(size_t index) const {
-        if (index >= size_) {
-            throw VectorException(5, "Index out of range");
-        }
         return data_[index];
     }
 
     // Оператор индексирования
     T& operator[](size_t index) {
-        if (index >= size_) {
-            throw VectorException(5, "Index out of range");
-        }
         return data_[index];
     }
 
@@ -117,9 +96,6 @@ public:
 
     // Оператор сложения векторов
     Vector operator+(const Vector& other) const {
-        if (size_ != other.size_) {
-            throw Vector(10, "Vectors must be of the same size");
-        }
         Vector result(size_);
         for (size_t i = 0; i < size_; ++i) {
             result[i] = data_[i] + other.data_[i];
@@ -129,9 +105,6 @@ public:
 
     // Оператор вычитания векторов
     Vector operator-(const Vector& other) const {
-        if (size_ != other.size_) {
-            throw Vector(10, "Vectors must be of the same size");
-        }
         Vector result(size_);
         for (size_t i = 0; i < size_; ++i) {
             result[i] = data_[i] - other.data_[i];
@@ -141,9 +114,6 @@ public:
 
     // Оператор умножения векторов (скалярное произведение)
     T operator*(const Vector& other) const {
-        if (size_ != other.size_) {
-            throw Vector(10, "Vectors must be of the same size");
-        }
         T result = T();
         for (size_t i = 0; i < size_; ++i) {
             result += data_[i] * other.data_[i];
