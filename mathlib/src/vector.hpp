@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <vector>
 #include <initializer_list>
 
 #include "exception.hpp"
@@ -52,6 +53,15 @@ public:
     Vector(Vector&& other) noexcept : data_(other.data_), size_(other.size_) {
         other.data_ = nullptr;
         other.size_ = 0;
+    }
+
+    Vector(const std::vector<T> vect) : size_(vect.size()) {
+        data_ = new T[size_];
+        if (data_ == nullptr)
+            throw VectorException(1, "Failed to allocate memory for vector");
+        for (size_t i = 0; i < size_; ++i) {
+            data_[i] = vect[i];
+        }
     }
 
     // Деструктор
@@ -194,6 +204,48 @@ public:
         }
         os << "]";
         return os;
+    }
+
+    // Метод для взятия срезки вектора
+    Vector<T> slice(int start, int end, int step = 1) const {
+        // Проверка корректности шага
+        if (step == 0) {
+            throw VectorException(20, "Step cannot be zero");
+        }
+
+        // Обработка отрицательных индексов (отсчет с конца)
+        int actual_start = (start >= 0) ? start : size_ + start;
+        int actual_end = (end >= 0) ? end : size_ + end;
+
+        // Проверка границ
+        if (actual_start >= size_ || actual_end >= size_) {
+            throw VectorException(20, "Slice indices out of range");
+        }
+
+        // Определение направления срезки
+        bool forward = (step > 0);
+        bool valid_range = forward ? (actual_start <= actual_end) : (actual_start >= actual_end);
+
+        if (!valid_range) {
+            throw VectorException(20, "Invalid slice range for given step direction");
+        }
+
+        // Вычисление размера результирующего вектора
+        size_t new_size = (abs(actual_end - actual_start) + abs(step)) / abs(step);
+        Vector<T> result(new_size);
+
+        // Заполнение результирующего вектора
+        if (forward) {
+            for (size_t i = 0, j = actual_start; i < new_size && j <= actual_end; ++i, j += step) {
+                result[i] = data_[j];
+            }
+        } else {
+            for (size_t i = 0, j = actual_start; i < new_size && j >= actual_end; ++i, j += step) {
+                result[i] = data_[j];
+            }
+        }
+
+        return result;
     }
 
 private:

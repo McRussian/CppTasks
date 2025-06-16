@@ -31,7 +31,18 @@ TEST(VectorTest, ConstructorListValues) {
         EXPECT_EQ(vec.at(i), i);
         EXPECT_EQ(vec[i], i);
     }
+}
 
+TEST(VectorTest, ConstructorFromVector) {
+    std::vector<int> vect = {1, 2, 3, 4, 5};
+
+    Vector<int> v(vect);
+    EXPECT_EQ(v.size(), vect.size());
+
+    for(unsigned int i = 0; i < v.size(); i++) {
+        EXPECT_EQ(v.at(i), vect.at(i));
+        EXPECT_EQ(v[i], vect[i]);
+    }
 }
 
 TEST(VectorTest, ExceptionIndexRange) {
@@ -102,4 +113,23 @@ TEST(VectorTest, MultiplyVectors) {
 
     Vector<int> bad(6);
     EXPECT_THROW(vec1 * bad, VectorException);
+}
+
+TEST(VectorTest, GetSlice) {
+    Vector<int> vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    EXPECT_EQ(vec.slice(0, 9, 2), Vector<int>({1, 3, 5, 7, 9}));
+
+    EXPECT_EQ(vec.slice(3, 5), Vector<int>({4, 5, 6}));
+
+    EXPECT_EQ(vec.slice(9, 0, -3), Vector<int>({10, 7, 4, 1}));
+
+    EXPECT_EQ(vec.slice(-1, -10, -3), Vector<int>({10, 7, 4, 1}));
+}
+
+TEST(VectorTest, GetBadSlice) {
+    Vector<int> vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    EXPECT_THROW(vec.slice(1, 9, 0), VectorException);
+
 }
