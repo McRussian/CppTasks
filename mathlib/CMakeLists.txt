@@ -10,6 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_executable(main_app 
     main.cpp
     src/vector.hpp
+    src/matrix.hpp
     src/exception.hpp
 )
 set_target_properties(main_app PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

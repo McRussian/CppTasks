@@ -21,3 +21,12 @@ public:
     explicit VectorException(int code, const char* message)
         : CommonMathException(code, message) {}
 };
+
+class MatrixException : public CommonMathException {
+public:
+    explicit MatrixException(int code, const std::string& message)
+        : CommonMathException(code, "Matrix error: " + message) {}
+    
+    explicit MatrixException(int code, const char* message)
+        : CommonMathException(code, message) {}
+};
