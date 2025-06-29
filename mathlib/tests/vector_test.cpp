@@ -104,6 +104,13 @@ TEST(VectorTest, MultiplyToScalar) {
     EXPECT_EQ(scalar * vec, rez);
 }
 
+TEST(VectorTest, ShiftToScalar) {
+    Vector<int> vec = {1, 2, 3, 4, 5};
+    int scalar = 2;
+    Vector<int> rez = {3, 4, 5, 6, 7};
+    EXPECT_EQ(vec + scalar, rez);
+}
+
 TEST(VectorTest, MultiplyVectors) {
     Vector<int> vec1(5, 2);
     Vector<int> vec2 = {1, 2, 3, 4, 5};

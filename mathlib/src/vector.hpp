@@ -2,10 +2,49 @@
 #include <iostream>
 #include <vector>
 #include <initializer_list>
+#include <concepts>
+#include <type_traits>
 
 #include "exception.hpp"
 
+
+// Вспомогательный концепт для проверки стандартных арифметических типов
 template <typename T>
+concept StandardArithmetic = std::is_arithmetic_v<T>;
+
+template <typename T>
+concept VectorElement = requires(T a, T b, int i, float f, double d) {
+    // Базовые операции между элементами одного типа
+    {a + b} -> std::convertible_to<T>;
+    {a - b} -> std::convertible_to<T>;
+    {a * b} -> std::convertible_to<T>;
+    {a += b} -> std::same_as<T&>;
+    {a -= b} -> std::same_as<T&>;
+    { -a } -> std::convertible_to<T>;
+    {T{0}};
+    
+    // Умножение на стандартные арифметические типы
+    {a * i} -> std::convertible_to<T>;
+    {i * a} -> std::convertible_to<T>;
+    {a * f} -> std::convertible_to<T>;
+    {f * a} -> std::convertible_to<T>;
+    {a * d} -> std::convertible_to<T>;
+    {d * a} -> std::convertible_to<T>;
+    
+    // Сложение с стандартными арифметическими типами (если нужно)
+    {a + i} -> std::convertible_to<T>;
+    {i + a} -> std::convertible_to<T>;
+    {a + f} -> std::convertible_to<T>;
+    {f + a} -> std::convertible_to<T>;
+    {a + d} -> std::convertible_to<T>;
+    {d + a} -> std::convertible_to<T>;
+    
+    // Для вывода в поток
+    { std::declval<std::ostream&>() << a } -> std::same_as<std::ostream&>;
+};
+
+
+template <VectorElement T>
 class Vector {
 public:
     explicit Vector(size_t size): size_(size) {
@@ -179,18 +218,30 @@ public:
         return result;
     }
 
-    // Оператор умножения на скаляр
-    Vector operator*(T scalar) const {
+    // Умножение на скаляр (любого арифметического типа)
+    template <StandardArithmetic U>
+    Vector operator*(U scalar) const {
         Vector result(size_);
         for (size_t i = 0; i < size_; ++i) {
-            result[i] = data_[i] * scalar;
+            result[i] = data_[i] * static_cast<T>(scalar);
         }
         return result;
     }
 
     // Дружественная функция для умножения скаляра на вектор
-    friend Vector operator*(T scalar, const Vector& vec) {
+    template <StandardArithmetic U, VectorElement V>
+    friend Vector<V> operator*(U scalar, const Vector<V>& vec) {
         return vec * scalar;
+    }
+
+    // Сложение с скаляром (если нужно)
+    template <StandardArithmetic U>
+    Vector operator+(U scalar) const {
+        Vector result(size_);
+        for (size_t i = 0; i < size_; ++i) {
+            result[i] = data_[i] + static_cast<T>(scalar);
+        }
+        return result;
     }
 
     // Оператор вывода в поток
