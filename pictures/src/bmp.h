@@ -32,11 +32,26 @@ struct BMPHeader {
 class BMPReader {
 public:
     explicit BMPReader(const std::string& filename);
+    ~BMPReader(); // Деструктор
+    
+    // Запрещаем копирование и присваивание
+    BMPReader(const BMPReader&) = delete;
+    BMPReader& operator=(const BMPReader&) = delete;
+    
     void printToConsole(char black_char = '@', char white_char = ' ') const;
+    // Рисует крест из двух линий (должны быть одна вертикальная и одна горизонтальная)
+    void drawCross(int line1_x1, int line1_y1, int line1_x2, int line1_y2,
+                  int line2_x1, int line2_y1, int line2_x2, int line2_y2);
+    
+    void saveToFile(const std::string& filename) const;
     
 private:
-    void validateFormat() const;
+    void drawLine(int x1, int y1, int x2, int y2);
     void checkColors() const;
+    void validatePoint(int x, int y) const;
+    std::pair<bool, std::pair<int, int>> checkLinesIntersection(
+        int line1_x1, int line1_y1, int line1_x2, int line1_y2,
+        int line2_x1, int line2_y1, int line2_x2, int line2_y2) const;
     
     BMPHeader header;
     std::vector<uint8_t> data;
