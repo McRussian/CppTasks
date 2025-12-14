@@ -1,27 +1,29 @@
-#ifndef VERTEX_H
-#define VERTEX_H
+#ifndef VERTEX_HPP
+#define VERTEX_HPP
 
 #include <iostream>
-
+#include <string>
 
 class Vertex {
 public:
     Vertex(unsigned int n, std::string v = ""): number_(n), value_(v) {};
-    ~Vertex() {};
+    ~Vertex() = default;
 
-    unsigned int number() {
+    // Константные методы доступа
+    unsigned int number() const {
         return number_;
     };
 
-    std::string value() {
+    std::string value() const {
         return value_;
     }
 
-    bool operator==(Vertex &other) {
+    // Константные операторы сравнения
+    bool operator==(const Vertex &other) const {
         return (number_ == other.number_) && (value_ == other.value_);
     };
 
-    bool operator!=(Vertex &other) {
+    bool operator!=(const Vertex &other) const {
         return !(*this == other);
     };
 
@@ -30,4 +32,4 @@ private:
     std::string value_;
 };
 
-#endif // VERTEX_H
+#endif // VERTEX_HPP

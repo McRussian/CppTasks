@@ -5,6 +5,7 @@ find_package(GTest REQUIRED)
 # Вместо этого нужно только файлы реализации (.cpp)
 add_executable(graphlib_test 
     ${CMAKE_CURRENT_SOURCE_DIR}/vertex_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/baseedge_test.cpp
     # Заголовочные файлы (.hpp) НЕ нужно здесь перечислять
 )
 
