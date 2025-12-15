@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "exception.hpp"
+
 class Vertex {
 public:
     Vertex(unsigned int n, std::string v = ""): number_(n), value_(v) {};
@@ -31,5 +33,17 @@ private:
     unsigned int number_;
     std::string value_;
 };
+
+// Специализация std::hash для Vertex - ДОЛЖНА БЫТЬ В ТОЙ ЖЕ НАМЕСПЕЙС
+namespace std {
+    template<>
+    struct hash<Vertex> {
+        size_t operator()(const Vertex& v) const {
+            // Простая хеш-функция
+            return hash<unsigned int>{}(v.number()) ^ 
+                   (hash<string>{}(v.value()) << 1);
+        }
+    };
+}
 
 #endif // VERTEX_HPP
